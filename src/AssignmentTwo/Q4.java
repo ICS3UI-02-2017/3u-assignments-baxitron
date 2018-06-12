@@ -58,13 +58,9 @@ public class Q4 {
 // make grute continously travel around castle
         grute.move();
         while(!grute.canPickThing()) {
-            if (grute.frontIsClear()) {
-                grute.move();
-                grute.turnRight();
+        if (grute.frontIsClear()) {
+        grute.move();
+        grute.turnRight();
             } else {
         grute.turnLeft();
-             
-           } 
-        }
-    }
-}  
+  }}}}  

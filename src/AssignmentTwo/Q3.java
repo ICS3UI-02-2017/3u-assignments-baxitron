@@ -29,26 +29,16 @@ public class Q3 {
 // make grute always return to point (0, 0)
         while (!grute.isFacingNorth()) {
             // if not facing north do this
-            grute.turnRight();
+       grute.turnRight();
         }
-        
         do {
-            grute.move();
+       grute.move();
         } while (grute.getStreet() != 0);
 
-
-
-
-
         while (!grute.isFacingWest()) {
-            grute.turnLeft();
+         grute.turnLeft();
         }
-
         do { 
             grute.move();
         } while (grute.getAvenue()!=0);
-        }
-
-
-
-    }
+ }}

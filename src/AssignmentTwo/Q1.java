@@ -41,19 +41,11 @@ public class Q1 {
 
 
         // make robot pick up 7 things
-        grute.move();
-        while (grute.frontIsClear()) {
-            if (grute.canPickThing()) {
-                if (grute.countThingsInBackpack() <= 6) {
-                    grute.pickThing();
-                }
-
-                grute.move();
-
-            }
-        }
-
-
-
-    }
-}
+      grute.move();
+      while (grute.frontIsClear()) {
+      if (grute.canPickThing()) {
+      if (grute.countThingsInBackpack() <= 6) {
+      grute.pickThing();
+ }
+       grute.move();
+            }}}}
