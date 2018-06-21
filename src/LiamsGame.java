@@ -41,10 +41,15 @@ public class LiamsGame extends JComponent implements ActionListener {
     Rectangle paddle2 = new Rectangle(505, 885, 90, 10);
     Rectangle powerup1 = new Rectangle (540,440, 35,35);
     Rectangle powerup2 = new Rectangle (540,440, 35,35);
+    Rectangle powerup3 = new Rectangle (540, 440, 35, 35);
+   Rectangle barrier1 = new Rectangle (540, 440, 50, 50);
     // ball integers
     Rectangle ball = new Rectangle(550, 447, 10, 10);
     int ballAngle = 45;
-    int ballSpeed = 7;
+    int ballAngle2 = 55;
+    int ballAngle3 = 60;
+    int ballAngle4 = 65;
+    int ballSpeed = 10;
     
     
     // start game
@@ -54,6 +59,7 @@ public class LiamsGame extends JComponent implements ActionListener {
     int paddle2speed = 10;
     int paddlePowerUp1 = 15;
     int paddlePowerUp2 = 100;
+    int ballpowerup3 = 11;
     
 // mouse integers
     int mouseX = 0;
@@ -67,13 +73,16 @@ public class LiamsGame extends JComponent implements ActionListener {
     // player scores
     int score1 = 0;
     int score2 = 0;
+   int sumscore = (score1 + score2);
     int powerUpX = 540;
     
     boolean player1hit = false;
     boolean player2hit = false;
     boolean leftwallhit = false;
     boolean rightwallhit = false;
-    int movePowerUp = 5;
+    boolean endgame = false;
+    int movePowerUp = 7;
+    int moveBarrier = 4;
     
    // create a custom font
      int gamestartfontsize = 48;
@@ -133,11 +142,26 @@ public class LiamsGame extends JComponent implements ActionListener {
         g.fillRect(ball.x, ball.y, ball.width, ball.height);
         // split the paddles 
        g.setColor(Color.BLACK);
-        g.fillRect(paddle1.x + 30, paddle1.y, 2, paddle1.height);
-        g.fillRect(paddle1.x + 60, paddle1.y, 2, paddle1.height);
-         g.fillRect(paddle2.x + 30, paddle2.y, 2, paddle2.height);
-        g.fillRect(paddle2.x + 60, paddle2.y, 2, paddle2.height);
-        // draw the scores
+      if (score1>= 10){
+       endgame = true; 
+       g.setColor(lime);
+        g.setFont(gamestartfont);
+        g.drawString("Player One Wins! ", WIDTH /2 - 220, HEIGHT / 2);
+        ballSpeed = 0;
+    }else{ if (score2>= 10){
+       endgame = true; 
+         g.setFont(gamestartfont);
+       g.setColor(lime);
+        g.drawString("Player Two Wins! ", WIDTH /2 - 220, HEIGHT /2);
+   ballSpeed = 0;
+    }
+       // end game 
+       if(endgame){
+           g.setColor(Color.BLACK);
+           g.fillRect(0, 0, 1100, 900);
+       }
+       
+       // draw the scores
        g.setColor(lime);
         g.setFont(biggerFont);
         g.drawString("" + score1, WIDTH / 2 - 400, 50);
@@ -150,7 +174,10 @@ public class LiamsGame extends JComponent implements ActionListener {
         if (startgame){
             HeightPressSpace = -500;
         }
-        
+        if (score1 + score2 >= 2){
+           g.setColor(Color.RED);
+            g.fillRect(barrier1.x, barrier1.y, barrier1.width, barrier1.height);
+        }
         
          if(score1 + score2 == 3){
          g.fillRect(powerup1.x,powerup1.y, powerup1.width, powerup1.height);
@@ -159,7 +186,12 @@ public class LiamsGame extends JComponent implements ActionListener {
              g.setColor(Color.ORANGE);
              g.fillRect(powerup2.x,powerup2.y, powerup2.width, powerup2.height);
          }
-    }
+         if(score1 + score2 == 7){
+             g.setColor(Color.cyan);
+             g.fillRect(powerup3.x, powerup3.y,powerup3.width, powerup3.height);
+         }
+    
+    }}
         // GAME DRAWING ENDS HERE
     
 
@@ -167,8 +199,13 @@ public class LiamsGame extends JComponent implements ActionListener {
     // This is run before the game loop begins!
     public void preSetup() {
         // Any of your pre setup before the loop starts should go here
+   if (player1hit = true){
+       player2hit = false;
+   }else{ if (player2hit= true){
+       player1hit = false;
+   }
     }
-
+    }
     // The main game loop
     // In here is where all the logic for my game will go
     public void gameLoop() {
@@ -192,98 +229,173 @@ public class LiamsGame extends JComponent implements ActionListener {
         ball.x = ball.x + (int) moveX;
         ball.y = ball.y + (int) moveY;
 
-    }}
+    }
+    // change ball angles throughout the game
+        if ((sumscore) >= 3  && (sumscore) < 5){
+       ballAngle = ballAngle2; 
+    }
+    if ((sumscore) >= 5 && (sumscore) < 7){
+       ballAngle = ballAngle3; 
+    }
+     if ((sumscore) >= 7){
+       ballAngle = ballAngle4; 
+    }
+    }
 
     private void checkForCollision() {
         // collision with sides
         if (ball.x < 0) {
-    ballAngle = ballAngle * -1;
+            ball.x = (ball.x + 5);
+            ballAngle = ballAngle * -1;
            leftwallhit = true;
            rightwallhit = false;
         }
         if (ball.x + ball.width > WIDTH) {
+          ball.x = (ball.x -5);
             ballAngle = ballAngle * -1;
             rightwallhit = true;
             leftwallhit = false;
         }
         // % 360 makes sure we dont go over 360 degrees
        //code for ball hitting paddle coming from left
-       // ball hits left side of paddle from left
+       // ball hits left side of paddle1 from left
         if (ball.intersects(paddle1)&& (ball.x + 5) <= (paddle1.x + 30) && (leftwallhit = true)) {
-            ballAngle = (180 + ballAngle);
+           ball.y=ball.y + 4;
+            ballAngle = (ballAngle * -1);
        player1hit = true;
-       player2hit = false;
+       
        
         }
-        // ball hits left side of paddle from right
+        // ball hits left side of paddle1 from right
           if (ball.intersects(paddle1)&& (ball.x + 5) <= (paddle1.x + 30) && (rightwallhit = true)) {
-            ballAngle = (180 + ballAngle * -1);
+              ball.y = ball.y + 4;
+              ballAngle = (90 + ballAngle * -1);
        player1hit = true;
-       player2hit = false;
        
+              System.out.println("1");
         }
           // ball hits paddle 1 middle 
           if (ball.intersects(paddle1)&& (paddle1.x + 60) > (ball.x + 5) && (ball.x + 5) > (paddle1.x + 30)) {
-            ballAngle = (180 + ballAngle * -1);
+           ball.y = ball.y + 4;
+              ballAngle = (90 + ballAngle*-1);
        player1hit = true;
-       player2hit = false;
+              System.out.println("2");
+    
           }
-          // if ball hits right side of paddle from left
+          // if ball hits right side of paddle1 from left
             if (ball.intersects(paddle1)&& (ball.x + 5) >= (paddle1.x + 60) && (leftwallhit = true)) {
-            ballAngle = (180 + ballAngle * -1);
+            ball.y = ball.y + 4;
+                ballAngle = (90 + ballAngle*-1);
        player1hit = true;
-       player2hit = false;
+                System.out.println("3");
        
         }
+    // if ball hits right side of paddle1 from right
+    if (ball.intersects(paddle1)&& (ball.x + 5) >= (paddle1.x + 60) && (rightwallhit = true)) {
+     ball.y = ball.y + 4;
+        ballAngle = (ballAngle * -1 );
+     player1hit = true;
+     
+    }
             // if ball hits left side of paddle 2 from left
              if (ball.intersects(paddle2)&& (ball.x + 5) <= (paddle2.x + 30) && (leftwallhit = true)) {
-            ballAngle = (180 + ballAngle);
+           ball.y=ball.y-4;
+                 ballAngle = ( ballAngle * -1);
        player2hit = true;
-       player1hit = false;
+      
        
         }
-             // if ball hits left side of paddle from the right
+             // if ball hits left side of paddle2 from the right
                if (ball.intersects(paddle2)&& (ball.x + 5) <= (paddle2.x + 30) && (rightwallhit = true)) {
-            ballAngle = (180 + ballAngle * -1);
+             ball.y=ball.y-4;
+                   ballAngle = (90 + ballAngle);
        player2hit = true;
-       player1hit = false;
+      
        
         }
                // if ball hits middle of paddle 2
           if (ball.intersects(paddle2)&& (paddle2.x + 60) > (ball.x + 5) && (ball.x + 5) > (paddle2.x + 30)) {
-            ballAngle = (180 + ballAngle * -1);
+           ball.y=ball.y-4;
+              ballAngle = (90 + ballAngle * -1  );
        player2hit = true;
-       player1hit = false;
+       
           }
-         
+          //if ball hits right side of paddle2 from right
+           if (ball.intersects(paddle2)&& (ball.x + 5) >= (paddle2.x + 60) && (rightwallhit = true)) {
+            ball.y=ball.y-4;
+               ballAngle = (ballAngle * -1);
+       player2hit = true;
+       
+       
+        }
+             //if ball hits right side of paddle2 from left
+           if (ball.intersects(paddle2)&& (ball.x + 5) >= (paddle2.x + 60) && (leftwallhit = true)) {
+            ball.y=ball.y-4;
+               ballAngle = (90+ballAngle * -1);
+       player2hit = true;
+      
+       
+        }
+          
+            
+          
+    
       
      // if ball hits powerup 1
-        if (ball.intersects(powerup1) && (player1hit == true)){
+        if (ball.intersects(powerup1) && (player1hit == true) && (score1 + score2==3)){
    paddle1speed = paddlePowerUp1;
+   powerup1.x = -2000000;
         // make the powerup last two levels
    if ((score1+score2) >= 5) {
        paddle1speed = paddle1speed;
    }
         }
-    if (ball.intersects(powerup1) && (player2hit == true)){
+    if (ball.intersects(powerup1) && (player2hit == true) && (score1 + score2 == 3)){
    paddle2speed = paddlePowerUp1;
+    powerup1.x = -2000000;
      if ((score1+score2) >= 5) {
        paddle2speed = paddle2speed;
     }}
      // if ball hits power up 2
-      if (ball.intersects(powerup2) && (player1hit == true)){
+      if (ball.intersects(powerup2) && (player1hit == true)&&(score1 + score2 == 5)){
    paddle1.width = paddlePowerUp2;
+    powerup2.x = -2000000;
        // make it only last two lifes
        if ((score1+score2) >= 7) {
        paddle1.width = paddle1.width;
        }
       }
-       if (ball.intersects(powerup2) && (player2hit == true)){
+       if (ball.intersects(powerup2) && (player2hit == true)&&(score1 + score2 == 5)){
    paddle2.width = paddlePowerUp2;
-    
-       if ((score1+score2) >= 6) {
+    powerup2.x = -2000000;
+       if ((score1+score2) >= 7) {
        paddle2.width = paddle2.width;
-       }}
+       }
+      }
+     
+    
+        
+   if (ball.intersects(powerup3)&& (player1hit == true)&&(score1 + score2 == 7)){
+       ballSpeed = ballSpeed = ballpowerup3;
+    powerup3.x = -2000000;
+       if(player2hit = true){
+       ballSpeed = ballSpeed;
+    }
+    if ((score1+score2) >= 10) {
+       ballSpeed = ballSpeed;
+   }}
+     if (ball.intersects(powerup3)&& (player2hit == true)&&(score1 + score2 == 7)){
+       ballSpeed = ballSpeed = ballpowerup3;
+   powerup3.x = -2000000;
+       if(player1hit = true){
+       ballSpeed = ballSpeed;
+   }
+       if ((score1+score2) >= 10) {
+       ballSpeed = ballSpeed;
+   }}
+     if(ball.intersects(barrier1)&& (player1hit == true)&& (score1 + score2 >= 2)){
+   ballAngle = (ballAngle * -1);
+     }
    
        
     }
@@ -334,13 +446,22 @@ public class LiamsGame extends JComponent implements ActionListener {
 
     private void powerups() {
   
-
+barrier1.x = barrier1.x + moveBarrier;
+if(barrier1.x> 1140){
+    barrier1.x = 5;
+}
          powerup1.x = powerup1.x + movePowerUp;
          if(powerup1.x > 1140){
              powerup1.x = 5;
          } 
-             
-         
+        powerup2.x = powerup2.x + movePowerUp;
+         if(powerup2.x > 1140){
+             powerup2.x = 5;
+         }        
+          powerup3.x = powerup3.x + movePowerUp;
+         if(powerup3.x > 1140){
+             powerup3.x = 5;
+         }        
     }
     
 
